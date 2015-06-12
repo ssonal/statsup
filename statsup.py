@@ -7,6 +7,9 @@ import time
 import json
 import matplotlib.pyplot as plt
 
+
+colors = ['#1F76B4','#903864','#D61E28', '#C8C8C8', '#8C582D']
+
 def monthsBetween(sdate, edate):
 	if not (edate[2] == sdate[2]):
 		return (12 - month[sdate[0]]+1) + month[edate[0]] + 12*(int(edate[2])-int(sdate[2])-1)
@@ -22,13 +25,19 @@ def hourlyG(hourlyC,names):
 	# print hourlyC
 	# print hourlyC[:,0]
 	width = 0.35
+
 	fig,ax = plt.subplots()
-	colors = ['b','y']
+	
+	ax.spines["top"].set_visible(False)  
+	ax.spines["right"].set_visible(False)  
+
+	ax.get_xaxis().tick_bottom()
+	ax.get_yaxis().tick_left()
 	bars = []
 	for i in range(len(names)):
-		b = ax.bar(hour+(i*width), hourlyC[i,:], width/(len(names)-1), color=colors[i])
+		b = ax.bar(hour+(i*width), hourlyC[i,:], width/(len(names)-1), color=colors[i],alpha=0.5)
 		bars.append(b[0])
-		
+	 
 	ax.set_ylabel('Percentage of Messages sent')
 	ax.set_xlabel('Hour o\' Day')
 	ax.set_xticks(hour+width)
@@ -51,12 +60,17 @@ def monthlyG(monthlyC, names):
 	mrange = np.arange(0,nmonths)
 	width = 0.35
 	fig,ax = plt.subplots()
-	colors = ['b','y']
+	ax.spines["top"].set_visible(False)  
+	ax.spines["right"].set_visible(False)  
+
+	ax.get_xaxis().tick_bottom()
+	ax.get_yaxis().tick_left()
 	bars = []
 	for i in range(len(names)):
-		b = ax.bar(mrange+(i*width), monthlyC[i,:], width/(len(names)-1), color=colors[i])
+		b = ax.bar(mrange+(i*width), monthlyC[i,:], width/(len(names)-1), color=colors[i],alpha=0.75)
 		bars.append(b[0])
-		
+	
+	
 	ax.set_ylabel('Percentage of Messages sent')
 	ax.set_xlabel('Month o\' Year')
 	ax.set_xticks(mrange+width)
