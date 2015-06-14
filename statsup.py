@@ -6,6 +6,7 @@ import json
 import matplotlib.pyplot as plt
 import math
 
+
 from datetime import date
 
 
@@ -118,21 +119,31 @@ def monthlyG(monthlyC, names):
 ##########################
 ### Message Extraction ###
 ##########################
-# term = sys.stdin
+term = sys.stdin
 sys.stdin = open('./test files/mojo.txt')
 # sys.stdout = open('b.out','w')
 i = 0
 msgs = []
-
-inputs = re.split(r'\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)', sys.stdin.read())
-sys.stdin.close()
+text = sys.stdin.read()
 # sys.stdin = term
+inputs = re.split(r'\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)', text)
+if len(inputs) == 1:
+	inputs = re.split(r'\n(?=[\d]+:[\d]+[A|P]M, [\w]{3} [\d]+[, ]?[\d]*?)',text)
+sys.stdin.close()
 
 # format - [[date, time], person, message]
 for line in inputs:
-	dt = re.match(r'^.*M (?=-)', line).group()
-	dt = ''.join(dt.split(',')).strip()
-	dt = dt.split(' ')
+	try:
+		dt = re.match(r'^.*M (?=-)', line).group()
+		dt = ''.join(dt.split(',')).strip()
+		dt = dt.split(' ')
+	except:
+		dt = re.match(r'^.*[\d]+[, ]?[\d]* (?=-)',line).group()
+
+		dt = ''.join(dt.split(',')).strip()
+		dt = dt.split(' ')
+
+		dt = dt[1:] + [dt[0][:-2],dt[0][-2:]]
 
 	if not len(dt) > 4:
 		dt = dt[:2]+[time.strftime('%Y')]+dt[2:]
@@ -203,7 +214,3 @@ for msg in msgs:
 
 hourlyG(hourlyC, pl)
 monthlyG(monthlyC, pl)
-
-plt.figure()
-plt.hist([dailyC[0], dailyC[1]], bins=207,normed=1, histtype='step',color=colors[:len(pl)], cumulative=0, alpha=1)
-plt.show()
