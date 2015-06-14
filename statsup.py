@@ -5,6 +5,7 @@ import time
 import json
 import matplotlib.pyplot as plt
 import math
+import seaborn as sns
 
 
 from datetime import date
@@ -51,7 +52,7 @@ def hourlyG(hourlyC,names):
 	h = np.array(hour, dtype=str)
 	ax.set_xticklabels(h)
 
-	ax.legend(tuple(bars),(n for n in names))
+	ax.legend(tuple(bars),(n for n in names), loc='best')
 	plt.show()
 
 #############
@@ -62,11 +63,10 @@ def monthlyG(monthlyC, names):
 	monthlyC = monthlyC/row_sums[:, np.newaxis]
 	mrange = np.arange(0,nmonths)
 	width = 0.35
-	
+	bars = []
 
 	fig,ax = plt.subplots()
-	bars = []
-	
+		
 	for i in range(len(names)):
 		b = ax.bar(mrange+(i*width), monthlyC[i,:], width/(len(names)-1), color=colors[i], alpha=0.75)
 		bars.append(b[0])
@@ -112,9 +112,25 @@ def monthlyG(monthlyC, names):
 	m = np.array(mlabels, dtype=str)
 	ax.set_xticklabels(m)
 
-	ax.legend(tuple(bars),(n for n in names))
+	ax.legend(tuple(bars),(n for n in names), loc='best')
 	plt.show()
 
+
+#############
+### Daily ###
+#############
+def dailyG(dailyC):	
+	plt.figure()
+	plt.hist([dailyC[0], dailyC[1]], bins=210,normed=1, histtype='stepfilled',color=colors[:len(pl)], cumulative=0, alpha=1)
+	plt.show()
+
+	dailyC = map(lambda x : np.array(x), dailyC)
+
+	plt.figure()
+	for n in pl:
+		sns.kdeplot(dailyC[name[n]], bw=0.087, shade=True, kernel='tri', color=colors[pl.index(n)], label=n)
+
+	plt.show()
 
 ##########################
 ### Message Extraction ###
@@ -129,6 +145,8 @@ text = sys.stdin.read()
 inputs = re.split(r'\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)', text)
 if len(inputs) == 1:
 	inputs = re.split(r'\n(?=[\d]+:[\d]+[A|P]M, [\w]{3} [\d]+[, ]?[\d]*?)',text)
+
+inputs = re.split(r'\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)', sys.stdin.read())
 sys.stdin.close()
 
 # format - [[date, time], person, message]
@@ -214,3 +232,5 @@ for msg in msgs:
 
 hourlyG(hourlyC, pl)
 monthlyG(monthlyC, pl)
+monthlyG(monthlyC, pl)
+dailyG(dailyC)
