@@ -51,7 +51,7 @@ def hourlyG(hourlyC,names):
 	h = np.array(hour, dtype=str)
 	ax.set_xticklabels(h)
 
-	ax.legend(tuple(bars),(n for n in names))
+	ax.legend(tuple(bars),(n for n in names), loc='best')
 	plt.show()
 
 #############
@@ -62,11 +62,10 @@ def monthlyG(monthlyC, names):
 	monthlyC = monthlyC/row_sums[:, np.newaxis]
 	mrange = np.arange(0,nmonths)
 	width = 0.35
-	
+	bars = []
 
 	fig,ax = plt.subplots()
-	bars = []
-	
+		
 	for i in range(len(names)):
 		b = ax.bar(mrange+(i*width), monthlyC[i,:], width/(len(names)-1), color=colors[i], alpha=0.75)
 		bars.append(b[0])
@@ -112,33 +111,36 @@ def monthlyG(monthlyC, names):
 	m = np.array(mlabels, dtype=str)
 	ax.set_xticklabels(m)
 
-	ax.legend(tuple(bars),(n for n in names))
+	ax.legend(tuple(bars),(n for n in names), loc='best')
 	plt.show()
 
 
+#############
+### Daily ###
+#############
+def dailyG(dailyC):	
+	plt.figure()
+	plt.hist([dailyC[0], dailyC[1]], bins=210,normed=1, histtype='stepfilled',color=colors[:len(pl)], cumulative=0, alpha=1)
+	plt.show()
 
-##########################
-### seaborn_Experiment ###
-##########################
-def sbe(h):
+	dailyC = map(lambda x : np.array(x), dailyC)
+
 	plt.figure()
 	for n in pl:
-		sns.kdeplot(h[name[n]], shade=True, kernel='tri', color=colors[pl.index(n)], label=n)
+		sns.kdeplot(dailyC[name[n]], bw=0.087, shade=True, kernel='tri', color=colors[pl.index(n)], label=n)
 
 	plt.show()
 
 ##########################
 ### Message Extraction ###
 ##########################
-# term = sys.stdin
 sys.stdin = open('./test files/mojo.txt')
-sys.stdout = open('b.out','w')
+# sys.stdout = open('b.out','w')
 i = 0
 msgs = []
 
 inputs = re.split(r'\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)', sys.stdin.read())
 sys.stdin.close()
-# sys.stdin = term
 
 # format - [[date, time], person, message]
 for line in inputs:
@@ -215,11 +217,4 @@ for msg in msgs:
 
 hourlyG(hourlyC, pl)
 monthlyG(monthlyC, pl)
-
-plt.figure()
-plt.hist([dailyC[0], dailyC[1]], bins=210,normed=1, histtype='stepfilled',color=colors[:len(pl)], cumulative=0, alpha=1)
-plt.show()
-
-dailyC = map(lambda x : np.array(x), dailyC)
-sbe(dailyC)
-
+dailyG(dailyC)
