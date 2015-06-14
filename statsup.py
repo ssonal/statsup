@@ -5,6 +5,7 @@ import time
 import json
 import matplotlib.pyplot as plt
 import math
+import seaborn as sns
 
 from datetime import date
 
@@ -115,12 +116,23 @@ def monthlyG(monthlyC, names):
 	plt.show()
 
 
+
+##########################
+### seaborn_Experiment ###
+##########################
+def sbe(h):
+	plt.figure()
+	for n in pl:
+		sns.kdeplot(h[name[n]], shade=True, kernel='tri', color=colors[pl.index(n)], label=n)
+
+	plt.show()
+
 ##########################
 ### Message Extraction ###
 ##########################
 # term = sys.stdin
 sys.stdin = open('./test files/mojo.txt')
-# sys.stdout = open('b.out','w')
+sys.stdout = open('b.out','w')
 i = 0
 msgs = []
 
@@ -205,5 +217,9 @@ hourlyG(hourlyC, pl)
 monthlyG(monthlyC, pl)
 
 plt.figure()
-plt.hist([dailyC[0], dailyC[1]], bins=207,normed=1, histtype='step',color=colors[:len(pl)], cumulative=0, alpha=1)
+plt.hist([dailyC[0], dailyC[1]], bins=210,normed=1, histtype='stepfilled',color=colors[:len(pl)], cumulative=0, alpha=1)
 plt.show()
+
+dailyC = map(lambda x : np.array(x), dailyC)
+sbe(dailyC)
+
