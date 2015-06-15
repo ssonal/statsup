@@ -2,13 +2,13 @@ import sys
 import numpy as np
 import re
 import time
-import json
 import matplotlib.pyplot as plt
 import math
 import seaborn as sns
-
-
+##
+from nltk.corpus import stopwords
 from datetime import date
+from collections import defaultdict
 
 
 colors=['#D3132D', '#1527F5', '#1F76B4','#903864','#D61E28', '#C8C8C8', '#8C582D']
@@ -17,7 +17,22 @@ month = {'Jan':1,'Feb':2,'Mar':3,'Apr':4,'May':5,'Jun':6,'Jul':7,'Aug':8,'Sep':9
 reMonth = {v:k for k,v in month.items()}
 name = {}
 
-
+#########################
+### Support Functions ###
+#########################
+def textPreprocess(raw):
+	# Lower case and remove apostrophes
+	raw = re.sub(r'\'(?=[\w])','', raw.lower())
+	# Remove punctuation
+	raw = re.sub(r'[^\w]',' ', raw)
+	# Remove leftover junk from emoticons
+	raw = re.sub(r' [\w] ',' ', raw)
+	# Remove numbers
+	raw = re.sub(r'[\d]+', ' ', raw)
+	# Remove extra spaces
+	raw = re.sub(r' +', ' ', raw)
+	return raw
+##
 def monthsBetween(sdate, edate):
 	if not (edate[2] == sdate[2]):
 		return (12 - month[sdate[0]]+1) + month[edate[0]] + 12*(int(edate[2])-int(sdate[2])-1)
@@ -121,7 +136,7 @@ def monthlyG(monthlyC, names):
 #############
 def dailyG(dailyC):	
 	plt.figure()
-	plt.hist([dailyC[0], dailyC[1]], bins=210,normed=1, histtype='stepfilled',color=colors[:len(pl)], cumulative=0, alpha=1)
+	plt.hist([dailyC[0], dailyC[1]], bins=210,normed=1, histtype='step',color=colors[:len(pl)], cumulative=0, alpha=1)
 	plt.show()
 
 	dailyC = map(lambda x : np.array(x), dailyC)
@@ -136,7 +151,7 @@ def dailyG(dailyC):
 ### Message Extraction ###
 ##########################
 term = sys.stdin
-sys.stdin = open('./test files/mojo.txt')
+sys.stdin = open('./test files/'+sys.argv[1])
 # sys.stdout = open('b.out','w')
 i = 0
 msgs = []
@@ -145,8 +160,6 @@ text = sys.stdin.read()
 inputs = re.split(r'\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)', text)
 if len(inputs) == 1:
 	inputs = re.split(r'\n(?=[\d]+:[\d]+[A|P]M, [\w]{3} [\d]+[, ]?[\d]*?)',text)
-
-inputs = re.split(r'\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)', sys.stdin.read())
 sys.stdin.close()
 
 # format - [[date, time], person, message]
@@ -194,7 +207,7 @@ nmonths = monthsBetween(sdate,edate)
 hourlyC = np.zeros([len(pl),24], dtype=float)
 monthlyC = np.zeros([len(pl),nmonths], dtype=float)
 dailyC = [[] for _ in range(len(pl))]
-
+messages = {name[p]:'' for p in pl}
 
 currentDate = msgs[0][0][0]
 i = 0
@@ -205,7 +218,9 @@ for msg in msgs:
 	h = int(re.match(r'\d+(?=\:)',msg[0][1]).group())
 	sender = msg[1]
 	off = monthsBetween(sdate,d.split(' ')) - 1
-
+	##
+	me = textPreprocess(msg[2])
+	##
 	if ap == 'AM':
 		if h == 12: h = 0	
 	else:
@@ -229,8 +244,23 @@ for msg in msgs:
 	hourlyC[name[sender]][h%24] += 1
 	dailyC[name[sender]] += [i]
 	monthlyC[name[sender]][off] += 1
-
+	##
+	messages[name[sender]] += ' '+me
+	##
+##
 hourlyG(hourlyC, pl)
 monthlyG(monthlyC, pl)
-monthlyG(monthlyC, pl)
 dailyG(dailyC)
+#####################
+### Word Analysis ###
+#####################
+s = stopwords.words('english')
+wordList = []
+w = {x:defaultdict(int) for x in range(len(pl))}
+
+for i in range(len(pl)):
+	words = filter(lambda w: not w in s, messages[i].split())
+	for word in words:
+		w[i][word] += 1
+	print pl[i],max(w[i],key = lambda k: w[i][k])
+##
