@@ -5,11 +5,19 @@ Currently a Python script that parses and interprets and throws up graphs of int
 - Average activity over a 24-hour cycle
 - Daily trends including cumulative graphs and KDE
 
-
 ### Dependencies
 - Python 2.7
 - numpy
 - matplotlib
 - seaborn
+- nltk
 
-TODO: Deployment of a Flask-app
+
+### How To Use:
+Download/clone this repo. Export conversations from whatsapp via Email. Save this conversation locally.
+Now run the following command on commandline.
+```
+python statsup.py {{path to whatsapp text file}}
+```
+
+TODO: Deployment of a web-app
