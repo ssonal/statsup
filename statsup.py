@@ -150,117 +150,124 @@ def dailyG(dailyC):
 ##########################
 ### Message Extraction ###
 ##########################
-term = sys.stdin
-sys.stdin = open('./test files/'+sys.argv[1])
-# sys.stdout = open('b.out','w')
-i = 0
-msgs = []
-text = sys.stdin.read()
-# sys.stdin = term
-inputs = re.split(r'\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)', text)
-if len(inputs) == 1:
-	inputs = re.split(r'\n(?=[\d]+:[\d]+[A|P]M, [\w]{3} [\d]+[, ]?[\d]*?)',text)
-sys.stdin.close()
 
-# format - [[date, time], person, message]
-for line in inputs:
-	try:
-		dt = re.match(r'^.*M (?=-)', line).group()
-		dt = ''.join(dt.split(',')).strip()
-		dt = dt.split(' ')
-	except:
-		dt = re.match(r'^.*[\d]+[, ]?[\d]* (?=-)',line).group()
 
-		dt = ''.join(dt.split(',')).strip()
-		dt = dt.split(' ')
-
-		dt = dt[1:] + [dt[0][:-2],dt[0][-2:]]
-
-	if not len(dt) > 4:
-		dt = dt[:2]+[time.strftime('%Y')]+dt[2:]
-
-	dt = [' '.join(dt[:3]).strip(), ' '.join(dt[3:]).strip()]
-
-	pe = re.search(r'(?<=- )[\w ]+(?=:)', line).group()
-	
-	me = re.search(r'(?<=: ).*', line, re.DOTALL).group()
-
-	msgs +=[(dt, pe.strip(), me.strip())]
-
-# Populate person list
-pl = [msgs[0][1]]
-for msg in msgs[1:]:
-	if not msg[1] in pl:
-		pl += [msg[1]]
+if __name__ == "__main__":
+	if len(sys.argv) == 2:
+		sys.stdin = open('./test files/'+sys.argv[1])
 	else:
-		continue
-
-# Populate name list
-i = 0
-for n in pl:
-	name[n] = i
-	i += 1
-
-sdate,edate = msgs[0][0][0].split(' '),msgs[-1][0][0].split(' ')
-nmonths = monthsBetween(sdate,edate)
-
-hourlyC = np.zeros([len(pl),24], dtype=float)
-monthlyC = np.zeros([len(pl),nmonths], dtype=float)
-dailyC = [[] for _ in range(len(pl))]
-messages = {name[p]:'' for p in pl}
-
-currentDate = msgs[0][0][0]
-i = 0
-
-for msg in msgs:
-	d = msg[0][0]
-	ap = msg[0][1][-2:]
-	h = int(re.match(r'\d+(?=\:)',msg[0][1]).group())
-	sender = msg[1]
-	off = monthsBetween(sdate,d.split(' ')) - 1
-	##
-	me = textPreprocess(msg[2])
-	##
-	if ap == 'AM':
-		if h == 12: h = 0	
-	else:
-		if not h == 12: h += 12
-
-	if not d == currentDate:
-		m0, d0, y0 = currentDate.split(' ')
-		m0 = month[m0]
-		d0 = int(d0)
-		y0 = int(y0)
-
-		m1, d1, y1 = d.split(' ')
-		m1 = month[m1]
-		d1 = int(d1)
-		y1 = int(y1)
-
-		diff = date(y1,m1,d1)-date(y0,m0,d0)
-		i += diff.days
-		currentDate = d
+		sys.stdin = open('./test files/mojo.txt')
 	
-	hourlyC[name[sender]][h%24] += 1
-	dailyC[name[sender]] += [i]
-	monthlyC[name[sender]][off] += 1
-	##
-	messages[name[sender]] += ' '+me
-	##
-##
-hourlyG(hourlyC, pl)
-monthlyG(monthlyC, pl)
-dailyG(dailyC)
-#####################
-### Word Analysis ###
-#####################
-s = stopwords.words('english')
-wordList = []
-w = {x:defaultdict(int) for x in range(len(pl))}
+	# sys.stdout = open('b.out','w')
+	i = 0
+	msgs = []
+	text = sys.stdin.read()
 
-for i in range(len(pl)):
-	words = filter(lambda w: not w in s, messages[i].split())
-	for word in words:
-		w[i][word] += 1
-	print pl[i],max(w[i],key = lambda k: w[i][k])
-##
+	inputs = re.split(r'\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)', text)
+	
+	if len(inputs) == 1:
+		inputs = re.split(r'\n(?=[\d]+:[\d]+[A|P]M, [\w]{3} [\d]+[, ]?[\d]*?)',text)
+	sys.stdin.close()
+
+	# format - [[date, time], person, message]
+	for line in inputs:
+		try:
+			dt = re.match(r'^.*M (?=-)', line).group()
+			dt = ''.join(dt.split(',')).strip()
+			dt = dt.split(' ')
+		except:
+			dt = re.match(r'^.*[\d]+[, ]?[\d]* (?=-)',line).group()
+
+			dt = ''.join(dt.split(',')).strip()
+			dt = dt.split(' ')
+
+			dt = dt[1:] + [dt[0][:-2],dt[0][-2:]]
+
+		if not len(dt) > 4:
+			dt = dt[:2]+[time.strftime('%Y')]+dt[2:]
+
+		dt = [' '.join(dt[:3]).strip(), ' '.join(dt[3:]).strip()]
+
+		pe = re.search(r'(?<=- )[\w ]+(?=:)', line).group()
+		
+		me = re.search(r'(?<=: ).*', line, re.DOTALL).group()
+
+		msgs +=[(dt, pe.strip(), me.strip())]
+
+	# Populate person list
+	pl = [msgs[0][1]]
+	for msg in msgs[1:]:
+		if not msg[1] in pl:
+			pl += [msg[1]]
+		else:
+			continue
+
+	# Populate name list
+	i = 0
+	for n in pl:
+		name[n] = i
+		i += 1
+
+	sdate,edate = msgs[0][0][0].split(' '),msgs[-1][0][0].split(' ')
+	nmonths = monthsBetween(sdate,edate)
+
+	hourlyC = np.zeros([len(pl),24], dtype=float)
+	monthlyC = np.zeros([len(pl),nmonths], dtype=float)
+	dailyC = [[] for _ in range(len(pl))]
+	messages = {name[p]:'' for p in pl}
+
+	currentDate = msgs[0][0][0]
+	i = 0
+
+	for msg in msgs:
+		d = msg[0][0]
+		ap = msg[0][1][-2:]
+		h = int(re.match(r'\d+(?=\:)',msg[0][1]).group())
+		sender = msg[1]
+		off = monthsBetween(sdate,d.split(' ')) - 1
+		##
+		me = textPreprocess(msg[2])
+		##
+		if ap == 'AM':
+			if h == 12: h = 0	
+		else:
+			if not h == 12: h += 12
+
+		if not d == currentDate:
+			m0, d0, y0 = currentDate.split(' ')
+			m0 = month[m0]
+			d0 = int(d0)
+			y0 = int(y0)
+
+			m1, d1, y1 = d.split(' ')
+			m1 = month[m1]
+			d1 = int(d1)
+			y1 = int(y1)
+
+			diff = date(y1,m1,d1)-date(y0,m0,d0)
+			i += diff.days
+			currentDate = d
+		
+		hourlyC[name[sender]][h%24] += 1
+		dailyC[name[sender]] += [i]
+		monthlyC[name[sender]][off] += 1
+		##
+		messages[name[sender]] += ' '+me
+		##
+	##
+	hourlyG(hourlyC, pl)
+	monthlyG(monthlyC, pl)
+	dailyG(dailyC)
+	#####################
+	### Word Analysis ###
+	#####################
+	s = stopwords.words('english')
+	wordList = []
+	w = {x:defaultdict(int) for x in range(len(pl))}
+
+	for i in range(len(pl)):
+		words = filter(lambda w: not w in s, messages[i].split())
+		for word in words:
+			w[i][word] += 1
+		print pl[i],max(w[i],key = lambda k: w[i][k])
+	##

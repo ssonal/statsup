@@ -14,10 +14,10 @@ Currently a Python script that parses and interprets and throws up graphs of int
 
 
 ### How To Use:
-Download/clone this repo. Export conversations from whatsapp via Email. Save this conversation locally.
+Download/clone this repo. Export conversations from whatsapp via Email. Save this conversation locally in the ''test files'' folder within the repo.
 Now run the following command on commandline.
 ```
-python statsup.py {{path to whatsapp text file}}
+python statsup.py {{name of text file}}
 ```
 
 TODO: Deployment of a web-app
