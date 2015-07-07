@@ -266,8 +266,8 @@ if __name__ == "__main__":
 	w = {x:defaultdict(int) for x in range(len(pl))}
 
 	for i in range(len(pl)):
-		words = filter(lambda w: not w in s, messages[i].split())
+		words = filter(lambda w: (not w in s) and len(w) >= 3, messages[i].split())
 		for word in words:
 			w[i][word] += 1
-		print pl[i],max(w[i],key = lambda k: w[i][k])
+		print pl[i],sorted(w[i],key = w[i].get, reverse=True)[:10]
 	##
