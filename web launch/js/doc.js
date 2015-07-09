@@ -37,10 +37,11 @@ var preProcess = function(data) {
 
 		return Math.round(Math.abs((d1.getTime() - d2.getTime())/(oneDay)));
 	}
-
+	// [{name1:noOfMessages, name2:noOfMessages},{name1:noOfMessages, name2:noOfMessages},...(24)]
   	var jsonData = {}; 
-  	_.each(people, function(person) { jsonData[person] = {'hourly': math.zeros(24).toArray(), 'daily': math.zeros(dateDiff(msgs[0][0][0], _.last(msgs)[0][0])+1).toArray()} });
 
+  	_.each(people, function(person) { jsonData[person] = {'hourly': math.zeros(24).toArray(), 'daily': math.zeros(dateDiff(msgs[0][0][0], _.last(msgs)[0][0])+1).toArray()} });
+  	// console.log(hourly)
 	var messageCorpus = _.map(people, function(p) { return [] }),
 		i = 0,
 		currentDate = msgs[0][0][0], 
@@ -70,20 +71,20 @@ var preProcess = function(data) {
 		jsonData[sender]['daily'][i] += 1
 	});
 
-	return jsonData;
+	return jsonData
 }
 
-
-
+var data;
 function doOpen(evt) {
 	var files = evt.target.files,
 		reader = new FileReader();
 
 	reader.onload = function() {
 		var data = this.result;
+
     	showout.value = data;
     	data = preProcess(data);
-    	visualize(data);
+    	plot(data)
     };
     
     reader.readAsBinaryString(files[0]);
