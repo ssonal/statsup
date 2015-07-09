@@ -1,7 +1,4 @@
 
-
-
-
 var preProcess = function(data) {
 	data = data.split(/\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)/);
 	var oneDay = 24*60*60*1000;
@@ -73,7 +70,7 @@ var preProcess = function(data) {
 		jsonData[sender]['daily'][i] += 1
 	});
 
-	console.log(jsonData)
+	return jsonData;
 }
 
 
@@ -85,7 +82,8 @@ function doOpen(evt) {
 	reader.onload = function() {
 		var data = this.result;
     	showout.value = data;
-    	preProcess(data);
+    	data = preProcess(data);
+    	visualize(data);
     };
     
     reader.readAsBinaryString(files[0]);
