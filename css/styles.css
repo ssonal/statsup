@@ -109,7 +109,7 @@ img.grayscale {
     display: block;
 }
 
-    
+
 .header h1 {
   font-size:80px;
   -webkit-text-stroke: 1px rgba(f,f,f,0.1);
@@ -181,7 +181,7 @@ img.grayscale {
   width: 140px;
   height: 140px;
   line-height: 136px;
-  vertical-align: middle; 
+  vertical-align: middle;
   text-align: center;
 }
 
@@ -194,7 +194,7 @@ img.grayscale {
   padding-top:7%;
   height: 100%;
   width: 100%;
-  background: url('http://www.bootply.com/assets/example/bg_suburb.jpg') no-repeat center center fixed; 
+  background: url('http://www.bootply.com/assets/example/bg_suburb.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -217,5 +217,7 @@ img.grayscale {
 footer {
   padding: 100px 0;
 }
-
+#lytics {
+  display: none;
+}
 /* -- end custom css for Bootstrap 3.x --*/
