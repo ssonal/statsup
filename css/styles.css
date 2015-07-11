@@ -127,7 +127,7 @@ img.grayscale {
 
 .header {
   height: 50%;
-  background: #f68076 url('../pt_topo_l.png') repeat center center fixed;
+  background: #f68076 url('../pt_topo_I.png') repeat center center fixed;
 }
 
 /* use alt in navbar and header for different color */
