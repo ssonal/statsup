@@ -31,7 +31,7 @@ var preProcess = function(data) {
 
 
 	// Handling the DD/MM/YYYY date format
-	if (dateFormat == "MM/DD/YYYY HH:mm" || "MM/DD/YYYY hh:mm A") {
+	if (dateFormat == "MM/DD/YYYY HH:mm" || dateFormat == "MM/DD/YYYY hh:mm A") {
 		_.map(data, function(line) {
 			var dateTime = line.match(/^.*[APM]? (?=-)/)[0].split(',').join('').trim().split(' ');
 
@@ -48,12 +48,11 @@ var preProcess = function(data) {
 
 
 	var msgs = _.map(data, function(line) {
-		var dateTime = line.match(/^.*[APM]? (?=-)/)[0].split(',').join('').trim().split(' ');
+		var dateTime = line.match(/^.*? (?=-)/)[0].split(',').join('').trim().split(' ');
 
 		// handles cases when the year is missing from messages by inserting present year
 		if(dateTime.length == 4)
 			dateTime.splice(2,0, new Date().getFullYear().toString());
-
 		dateTime = moment(dateTime, dateFormat)
 
 		// var date = dateTime.slice(0,3);
