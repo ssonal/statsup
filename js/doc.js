@@ -1,22 +1,58 @@
 
 var preProcess = function(data) {
+	//date format to begin with
 	var dateFormat = "MMM DD YYYY hh:mm A"
-	
+
 	// var oneDay = 24*60*60*1000;
 	// var months = {'Jan':1, 'Feb':2,'Mar':3,'Apr':4,'May':5,'Jun':6,'Jul':7,'Aug':8,'Sep':9,'Oct':10, 'Nov':11, 'Dec':12}
+
 	data = data.split(/\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+ [A|P]M)/);
-	
-	if(data.length == 1)
-		data = data[0].split(/\n(?=[\d]+\/[\d]+\/[\d]{4}, [\d]+:[\d]+ [A|P]M)/)
 
-	if (!(moment(data[0].match(/^.*M (?=-)/)[0].split(',').join('').trim().split(' '), dateFormat).isValid()))
-		dateFormat = "MM/DD/YYYY hh:mm A"
-	
+	// Check to see if the above split function manages to do so successfully or not. If not, length of data will be 1
+	if(data.length == 1) {
+		// Handle 24 hour format for MMMDDYYYY hh:mm A
+		data = data[0].split(/\n(?=[\w]{3} [\d]+, [\d, ]*?[\d]+:[\d]+)/);
+
+		//implies the case has not been handled by the above regex. Try case where date is MM/DD/YYYY hh:mm A
+		if(data.length == 1) {
+			data = data[0].split(/\n(?=[\d]+\/[\d]+\/[\d]{4}, [\d]+:[\d]+ [A|P]M)/)
+
+			if (data.length == 1) {
+				data = data[0].split(/\n(?=[\d]+\/[\d]+\/[\d]{4}, [\d]+:[\d]+)/)
+
+				dateFormat = "MM/DD/YYYY HH:mm"
+			}else {
+				dateFormat = "MM/DD/YYYY hh:mm A"
+			}
+		}else {
+			dateFormat = "MMM DD YYYY HH:mm"
+		}
+	}
+
+
+	// Handling the DD/MM/YYYY date format
+	if (dateFormat == "MM/DD/YYYY HH:mm" || "MM/DD/YYYY hh:mm A") {
+		_.map(data, function(line) {
+			var dateTime = line.match(/^.*[APM]? (?=-)/)[0].split(',').join('').trim().split(' ');
+
+			if (!moment(line.match(/^.*[APM]? (?=-)/)[0].split(',').join('').trim().split(' '), dateFormat).isValid())
+				dateFormat = "DD/MM/"+dateFormat.split('/')[2];
+		})
+	}
+
+	// if(data.length == 1)
+	// 	data = data[0].split(/\n(?=[\d]+\/[\d]+\/[\d]{4}, [\d]+:[\d]+)/)
+
+	// if (!(moment(data[0].match(/^.*M (?=-)/)[0].split(',').join('').trim().split(' '), dateFormat).isValid()))
+	// 	dateFormat = "MM/DD/YYYY hh:mm A"
+
+
 	var msgs = _.map(data, function(line) {
-		var dateTime = line.match(/^.*M (?=-)/)[0].split(',').join('').trim().split(' ');
+		var dateTime = line.match(/^.*[APM]? (?=-)/)[0].split(',').join('').trim().split(' ');
 
+		// handles cases when the year is missing from messages by inserting present year
 		if(dateTime.length == 4)
-			dateTime.splice(2,0, new Date().getFullYear());
+			dateTime.splice(2,0, new Date().getFullYear().toString());
 
 		dateTime = moment(dateTime, dateFormat)
 
@@ -30,10 +66,10 @@ var preProcess = function(data) {
 			return null;
 		}
 		var message = line.match( /: (.*)/)[1].trim();
-		
+
 		return [dateTime, person, message];
 	});
-	
+
 	msgs = _.filter(msgs, function(msg){return msg != null})
 	var people = _.chain(msgs)
 				  .map(function(msg) { return msg[1]; })
@@ -111,7 +147,7 @@ function doOpen(evt) {
     	// showout.value = data;
 			d3.selectAll("svg").remove();
 			document.getElementById("lytics").style.display = "block";
-			
+
     	data = preProcess(data);
     	plot(data)
     };
