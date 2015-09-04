@@ -149,9 +149,9 @@ var plot = function(data){
 		})
 
 		var margin = {top: 20, right: 30, bottom: 30, left: 80},
-	    width = 1000 - margin.left - margin.right,
+	    width = 1000 - margin.left - margin.right + dataLength,
 	    height = 500 - margin.top - margin.bottom;
-			height = ((78-names.length*2)<0)? height : height+(78-names.length*2)
+		height = ((78-names.length*2)<0)? height : height+(78-names.length*2)
 
 		var x0 = d3.scale.ordinal()
 		    .rangeRoundBands([0, width+margin.left+margin.right-300], .1);
