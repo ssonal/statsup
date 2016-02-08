@@ -28,7 +28,7 @@ var preProcess = function(data) {
 
 		//Handles cases where DD & MM are interchanged
 		_.map(data, function(line) {
-			var dateTime = line.match(/^.*[APM]? (?=-)/)[0].split(',').join('').trim().split(' ');
+			// var newDateTime = line.match(/^.*[APM]? (?=-)/)[0].split(',').join('').trim().split(' ');
 
 			if (!moment(line.match(/^.*[APM]? (?=-)/)[0].split(',').join('').trim().split(' '), dateFormat).isValid())
 				dateFormat = "DD/MM/"+dateFormat.split('/')[2];
@@ -45,12 +45,12 @@ var preProcess = function(data) {
 	}
 
 	var msgs = _.map(data, function(line) {
-		var dateTime = line.match(/^.*? (?=-)/)[0].split(',').join('').trim().split(' ');
+		var newDateTime = line.match(/^.*? (?=-)/)[0].split(',').join('').trim().split(' ');
 
 		// handles cases when the year is missing from messages by inserting present year
-		if(dateTime.length == 4)
-			dateTime.splice(2,0, new Date().getFullYear().toString());
-		dateTime = moment(dateTime, dateFormat)
+		if(newDateTime.length == 4)
+			newDateTime.splice(2,0, new Date().getFullYear().toString());
+		newDateTime = moment(newDateTime, dateFormat)
 
 		try {
 			var person = line.match(/- ([\w ]+(?=:))/)[1].trim();
@@ -60,10 +60,10 @@ var preProcess = function(data) {
 		}
 		var message = line.match( /: (.*)/)[1].trim();
 
-		return [dateTime, person, message];
+		return [newDateTime, person, message];
 	});
 
-	msgs = _.filter(msgs, function(msg){return msg != null})
+	msgs = _.filter(msgs, function(msg){return msg != null});
 	var people = _.chain(msgs)
 				  .map(function(msg) { return msg[1]; })
 				  .uniq()
@@ -78,32 +78,32 @@ var preProcess = function(data) {
 
   	var jsonData = {};
 
-  	_.each(people, function(person) { jsonData[person] = {'hourly': math.zeros(24).toArray(), 'daily': math.zeros(dateDiff(_.last(msgs)[0], msgs[0][0])+1).toArray()} });
+  	_.each(people, function(person) { jsonData[person] = {'hourly': math.zeros(24).toArray(), 'daily': math.zeros(dateDiff(_.last(msgs)[0], msgs[0][0])+1).toArray(), 'initiated_per_day': math.zeros(dateDiff(_.last(msgs)[0], msgs[0][0])+1).toArray(), 'avg_message_length': 0 } });
 
 	var messageCorpus = _.map(people, function(p) { return [] }),
 		i = 0,
-		currentDate = msgs[0][0]
-		// currentDate = msgs[0][0][0],
-		// currentTime = msgs[0][0][1]
-
+		currentDateTime = msgs[0][0],
+		currentTime = msgs[0][0]
 
 	_.each(msgs, function(msg) {
-		var dateTime = msg[0]
-		// var date = msg[0][0]
-		// var ap = _.last(msg[0][1], 2).join('')
-		// var hour = parseInt(msg[0][1].match(/\d+(?=\:)/))
+		var newDateTime = msg[0]
 		var sender = msg[1]
 
-		if(currentDate.dayOfYear() != dateTime.dayOfYear()) {
-			i += dateDiff(dateTime, currentDate);
-			currentDate = dateTime.clone();
+		if(currentDateTime.dayOfYear() != newDateTime.dayOfYear()) {
+			i += dateDiff(newDateTime, currentDateTime);
+			currentDateTime = newDateTime.clone();
 		}
 
-		jsonData[sender]['hourly'][dateTime.hour()] += 1
-		// jsonData[sender]['hourly'][hour%24] += 1
+		if(moment.duration(newDateTime.diff(currentTime)).asHours() > 2){
+			console.log(msg[2]);
+			console.log(moment.duration(newDateTime.diff(currentTime)).asHours())
+			jsonData[sender]['initiated_per_day'][i] += 1
+			currentTime = newDateTime.clone();
+		}
+		jsonData[sender]['hourly'][newDateTime.hour()] += 1
 		jsonData[sender]['daily'][i] += 1
 	});
-
+	console.log(jsonData);
 	return jsonData
 }
 
@@ -116,8 +116,8 @@ function doOpen(evt) {
 		var data = this.result;
 
     	// showout.value = data;
-			d3.selectAll("svg").remove();
-			document.getElementById("lytics").style.display = "block"
+		d3.selectAll("svg").remove();
+		document.getElementById("lytics").style.display = "block"
 
     	data = preProcess(data);
     	plot(data)
