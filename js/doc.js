@@ -60,14 +60,16 @@ var preProcess = function(data) {
 		}
 		var message = line.match( /: (.*)/)[1].trim();
 
-		return [newDateTime, person, message];
+		return {'time' : newDateTime['_d'], 'name' : person, 'message' : message};
 	});
 
 	msgs = _.filter(msgs, function(msg){return msg != null});
 	var people = _.chain(msgs)
-				  .map(function(msg) { return msg[1]; })
+				  .map(function(msg) { return msg['name']; })
 				  .uniq()
 				  .value();
+
+	return [msgs, people];
 
   	function dateDiff(d1, d2) {
 		var m = d1.dayOfYear() - d2.dayOfYear()
@@ -118,9 +120,10 @@ function doOpen(evt) {
     	// showout.value = data;
 		d3.selectAll("svg").remove();
 		document.getElementById("lytics").style.display = "block"
-
+		document.getElementById("chat").style.display = "block";
     	data = preProcess(data);
-    	plot(data)
+    	// plot(data)
+			makeMessage(data[0], data[1])
     };
 
     reader.readAsBinaryString(files[0]);
