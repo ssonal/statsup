@@ -6,13 +6,7 @@ var makeMessage = function(data, names){
   // Register a helper
   Handlebars.registerHelper('ifEqual', function(s, options){
     // str is the argument passed to the helper when called
-<<<<<<< HEAD
-    console.log("***"+s+"+++"+name[0]+"***");
-    if(s != names[0]) {
-=======
-    // console.log("***"+s+"+++"+name[0]+"***");
     if(s == names[0]) {
->>>>>>> e0f5cf7fd02d151e2d7c859ce3669b37e5cb5442
       return options.fn(this);
     }
     else {
