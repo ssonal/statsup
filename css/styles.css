@@ -1,223 +1,171 @@
-/* -- custom css for Bootstrap 3.x --*/
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700);
+*, *:before, *:after {
+  box-sizing: border-box; }
 
-/* move special fonts to HTML head for better performance */
-@import url(http://fonts.googleapis.com/css?family=Voltaire);
-
-html,
 body {
-  height: 100%;
-  width: 100%;
-  font-family:Arial,sans-serif;
-}
+  background: #C5DDEB;
+  font: 14px/20px "Lato", Arial, sans-serif;
+  padding: 40px 0;
+  color: white; }
 
-/* fix bs3 horizontal scrollbar bug */
-.row { margin: 0; padding: 0 }
+ul {
+  list-style-type: none; }
 
+.container {
+  margin: 0 auto;
+  width: 750px;
+  background: #444753;
+  border-radius: 5px; }
 
-/* use special fonts in certain elements */
-h1,h2,h3,h4,.lead,.btn,.navbar a {
-  text-transform:uppercase;
-  font-family:'Voltaire',Arial,sans-serif;
-  letter-spacing:2px;
-}
-
-h1 {
-  font-size:50px;
-}
-
-/* make images gray */
-img.grayscale {
-    filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+, Firefox on Android */
-    filter: gray; /* IE6-9 */
-    -webkit-filter: grayscale(100%); /* Chrome 19+, Safari 6+, Safari 6+ iOS */
-}
-
-.icon-bar {
-   background-color:#fff;
-}
-
-.scroll-down a, .scroll-top a {
-   color:#ffffff;
-}
-
-.scroll-down {
-   position:fixed;
-   bottom:20%;
-   right:0%;
-   color:#f9f9f9;
-}
-
-.scroll-top {
-  background-color:#dbdbdb;
-}
-
-.vert {
-  vertical-align: middle;
-  width:100%;
-  padding-top:4%;
-  text-align:center;
-}
-
-.header .btn-lg {
-   font-size:28px;
-   border-color:#eeeeee;
-   padding:15px;
-   background-color:transparent;
-   color:#ffffff;
-}
-
-.header .btn-lg:hover {
-   background-color:#eeeeee;
-   color:#777777;
-}
-
-.navbar a {
-  color:#fff;
-  font-size:14px;
-}
-
-.navbar-bold.affix {
-  background-color:#d46054;
-}
-
-.navbar-bold {
-  background-color:#f68076;
-  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
-}
-
-.navbar-bold li a:hover, .navbar-bold li.active {
-  background-color:#d46054;
-}
-
-.btn-file {
+.people-list {
+  width: 260px;
+  float: left; }
+  .people-list .search {
+    padding: 20px; }
+  .people-list input {
+    border-radius: 3px;
+    border: none;
+    padding: 14px;
+    color: white;
+    background: #6A6C75;
+    width: 90%;
+    font-size: 14px; }
+  .people-list .fa-search {
     position: relative;
-    overflow: hidden;
-}
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
-}
+    left: -25px; }
+  .people-list ul {
+    padding: 20px;
+    height: 770px; }
+    .people-list ul li {
+      padding-bottom: 20px; }
+  .people-list img {
+    float: left; }
+  .people-list .about {
+    float: left;
+    margin-top: 8px; }
+  .people-list .about {
+    padding-left: 8px; }
+  .people-list .status {
+    color: #92959E; }
 
+.chat {
+  width: 490px;
+  float: left;
+  background: #F2F5F8;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  color: #434651; }
+  .chat .chat-header {
+    padding: 20px;
+    border-bottom: 2px solid white; }
+    .chat .chat-header img {
+      float: left; }
+    .chat .chat-header .chat-about {
+      float: left;
+      padding-left: 10px;
+      margin-top: 6px; }
+    .chat .chat-header .chat-with {
+      font-weight: bold;
+      font-size: 16px; }
+    .chat .chat-header .chat-num-messages {
+      color: #92959E; }
+    .chat .chat-header .fa-star {
+      float: right;
+      color: #D8DADF;
+      font-size: 20px;
+      margin-top: 12px; }
+  .chat .chat-history {
+    padding: 30px 30px 20px;
+    border-bottom: 2px solid white;
+    overflow-y: scroll;
+    height: 575px; }
+    .chat .chat-history .message-data {
+      margin-bottom: 15px; }
+    .chat .chat-history .message-data-time {
+      color: #a8aab1;
+      padding-left: 6px; }
+    .chat .chat-history .message {
+      color: white;
+      padding: 18px 20px;
+      line-height: 26px;
+      font-size: 16px;
+      border-radius: 7px;
+      margin-bottom: 30px;
+      width: 90%;
+      position: relative; }
+      .chat .chat-history .message:after {
+        bottom: 100%;
+        left: 7%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: #86BB71;
+        border-width: 10px;
+        margin-left: -10px; }
+    .chat .chat-history .my-message {
+      background: #86BB71; }
+    .chat .chat-history .other-message {
+      background: #94C2ED; }
+      .chat .chat-history .other-message:after {
+        border-bottom-color: #94C2ED;
+        left: 93%; }
+  .chat .chat-message {
+    padding: 30px; }
+    .chat .chat-message textarea {
+      width: 100%;
+      border: none;
+      padding: 10px 20px;
+      font: 14px/22px "Lato", Arial, sans-serif;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      resize: none; }
+    .chat .chat-message .fa-file-o, .chat .chat-message .fa-file-image-o {
+      font-size: 16px;
+      color: gray;
+      cursor: pointer; }
+    .chat .chat-message button {
+      float: right;
+      color: #94C2ED;
+      font-size: 16px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      background: #F2F5F8; }
+      .chat .chat-message button:hover {
+        color: #75b1e8; }
 
-.header h1 {
-  font-size:80px;
-  -webkit-text-stroke: 1px rgba(f,f,f,0.1);
-  color:#431a6d;
-  color:#fff;
-  margin-left:-5px;
-  margin-bottom:5px;
-  text-transform:uppercase;
-}
+.online, .offline, .me {
+  margin-right: 3px;
+  font-size: 10px; }
 
-.header .lead {
-  color:#d46054;
-  font-size:25px;
-}
+.online {
+  color: #86BB71; }
 
-.header {
-  height: 50%;
-  background: #f68076 url('../pt_topo_I.png') repeat center center fixed;
-}
+.offline {
+  color: #E38968; }
 
-/* use alt in navbar and header for different color */
+.me {
+  color: #94C2ED; }
 
-.alt {
-  background-color: #6E28C9;
-}
+.align-left {
+  text-align: left; }
 
-.alt .lead {
-  color: #3B0496;
-}
+.align-right {
+  text-align: right; }
 
-.alt.affix {
-  background-color:#4C06AB;
-}
+.float-right {
+  float: right; }
 
-.alt li a:hover, .alt li.active {
-  background-color:#5D17BA;
-}
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0; }
 
-.file{
-  visibility:hidden;
-  position:absolute;
-}
-
-
-.blurb {
-  padding: 120px 0;
-  background-color:#fefefe;
-}
-
-.blurb .panel {
-  background-color:transparent;
-}
-
-.featurette {
-  background: #222334;
-  padding: 50px 0;
-  color: #ffffff;
-}
-
-.featurette-item {
-  margin-bottom: 15px;
-}
-
-.featurette-item > i {
-  border: 3px solid #ffffff;
-  border-radius: 50%;
-  display: inline-block;
-  font-size: 56px;
-  width: 140px;
-  height: 140px;
-  line-height: 136px;
-  vertical-align: middle;
-  text-align: center;
-}
-
-.featurette-item > i:hover {
-  font-size: 68px;
-}
-
-.callout {
-  color: #ffffff;
-  padding-top:7%;
-  height: 100%;
-  width: 100%;
-  background: url('http://www.bootply.com/assets/example/bg_suburb.jpg') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
-.gallery {
-  padding: 50px 0;
-}
-
-.call-to-action {
-  background: #eeeeee;
-  padding: 50px 0;
-}
-
-.call-to-action .btn {
-  margin: 10px;
-}
-
-footer {
-  padding: 100px 0;
-}
-#lytics {
-  display: none;
-}
-/* -- end custom css for Bootstrap 3.x --*/
+/*# sourceMappingURL=styles.css.map */
