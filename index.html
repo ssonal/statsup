@@ -14,6 +14,7 @@
     <link href="./css/d3styl.css" rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="./css/doc.css">
+		<link rel="stylesheet" href="css/styles.css">
 	</head>
 	<body>
 
@@ -102,7 +103,83 @@
 <div class="featurette">
 
 </div>
+<div class="container clearfix" id = "chat" style="display:none;">
+		<div class="people-list" id="people-list">
+				<div class="search">
+						<input type="text" placeholder="search" />
+						<i class="fa fa-search"></i>
+				</div>
+				<ul class="list">
+						<li class="clearfix">
+								<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" alt="avatar" />
+								<div class="about">
+										<div class="name">{{other_name}}</div>
+								</div>
+						</li>
+				</ul>
+		</div>
 
+		<div class="chat">
+				<div class="chat-header clearfix">
+						<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" alt="avatar" />
+
+						<div class="chat-about">
+								<script id="chat-about-template" type="text/x-handlebars-template">
+									<div class="chat-with">Chat with {{other_name}}</div>
+									<div class="chat-num-messages">{{no_messages}} messages</div>
+								</script>
+						</div>
+						<i class="fa fa-star"></i>
+				</div>
+				<!-- end chat-header -->
+
+				<div class="chat-history">
+						<ul class="chat-history-list">
+									<script id="message-template" type="text/x-handlebars-template">
+											{{#each data}}
+												{{#ifEqual name}}
+													<li class="clearfix">
+															<div class="message-data align-right">
+																	<span class="message-data-time">{{time}}</span> &nbsp; &nbsp;
+																	<span class="message-data-name">{{name}}</span> <i class="fa fa-circle me"></i>
+															</div>
+															<div class="message other-message float-right">
+																	{{message}}
+															</div>
+													</li>
+												{{else}}
+													<li>
+															<div class="message-data">
+																	<span class="message-data-name"><i class="fa fa-circle online"></i> {{name}}</span>
+																	<span class="message-data-time">{{time}}</span>
+															</div>
+															<div class="message my-message">
+																	{{message}}
+															</div>
+													</li>
+												{{/ifEqual}}
+											{{/each}}
+									</script>
+						</ul>
+				</div>
+				<!-- end chat-history -->
+
+				<div class="chat-message clearfix">
+						<textarea name="message-to-send" id="message-to-send" placeholder="Type your message" rows="3"></textarea>
+
+						<i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
+						<i class="fa fa-file-image-o"></i>
+
+						<button>Send</button>
+
+				</div>
+				<!-- end chat-message -->
+
+		</div>
+		<!-- end chat -->
+
+</div>
+<!-- end container -->
 
 
 <footer>
@@ -127,5 +204,9 @@
     <script type="text/javascript" src="./js/d3.min.js"></script>
     <script type="text/javascript" src="./js/d3viz.js"></script>
     <script type="text/javascript" src="./js/doc.js"></script>
+
+		<script src="js/jquery-2.2.3.min.js" charset="utf-8"></script>
+		<script src="js/handlebars-v4.0.5.js" charset="utf-8"></script>
+		<script src="js/chat.js" charset="utf-8"></script>
 	</body>
 </html>
