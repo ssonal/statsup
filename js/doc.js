@@ -1,4 +1,4 @@
-var preProcess = function(data) {
+var preProcess = function(data, early) {
 	//empty date format to begin with
 	var dateFormat = ""
 	// isolate the first date
@@ -59,17 +59,21 @@ var preProcess = function(data) {
 			return null;
 		}
 		var message = line.match( /: (.*)/)[1].trim();
-
-		return {'time' : newDateTime['_d'], 'name' : person, 'message' : message};
+		if(early == true) {
+			return {'time' : newDateTime['_d'], 'name' : person, 'message' : message};
+		}
+		return [newDateTime, person, message];
 	});
 
 	msgs = _.filter(msgs, function(msg){return msg != null});
 	var people = _.chain(msgs)
-				  .map(function(msg) { return msg['name']; })
+				  .map(function(msg) { return msg['name'] || msg[1]; })
 				  .uniq()
 				  .value();
 
-	return [msgs, people];
+	if(early == true) {
+		return [msgs, people];
+	}
 
   	function dateDiff(d1, d2) {
 		var m = d1.dayOfYear() - d2.dayOfYear()
@@ -81,11 +85,13 @@ var preProcess = function(data) {
   	var jsonData = {};
 
   	_.each(people, function(person) { jsonData[person] = {'hourly': math.zeros(24).toArray(), 'daily': math.zeros(dateDiff(_.last(msgs)[0], msgs[0][0])+1).toArray(), 'initiated_per_day': math.zeros(dateDiff(_.last(msgs)[0], msgs[0][0])+1).toArray(), 'avg_message_length': 0 } });
-
-	var messageCorpus = _.map(people, function(p) { return [] }),
-		i = 0,
-		currentDateTime = msgs[0][0],
-		currentTime = msgs[0][0]
+		console.log(people);
+	var messageCorpus = _.map(people, function(p) {
+		return []
+	});
+	var i = 0;
+	var currentDateTime = msgs[0][0];
+	var currentTime = msgs[0][0];
 
 	_.each(msgs, function(msg) {
 		var newDateTime = msg[0]
@@ -102,10 +108,11 @@ var preProcess = function(data) {
 			jsonData[sender]['initiated_per_day'][i] += 1
 			currentTime = newDateTime.clone();
 		}
+		console.log(jsonData);
 		jsonData[sender]['hourly'][newDateTime.hour()] += 1
 		jsonData[sender]['daily'][i] += 1
 	});
-	console.log(jsonData);
+	// console.log(jsonData);
 	return jsonData
 }
 
@@ -118,18 +125,16 @@ function doOpen(evt) {
     reader.onload = function() {
         var data = this.result;
 
-        // showout.value = data;
-        d3.selectAll("svg").remove();
-        // document.getElementById("lytics").style.display = "block"
-        document.getElementById("chat").style.display = "block";
-
     	// showout.value = data;
 		d3.selectAll("svg").remove();
-		// document.getElementById("lytics").style.display = "block"
+		document.getElementById("lytics").style.display = "block"
 		document.getElementById("chat").style.display = "block";
-    	data = preProcess(data);
-    	// plot(data)
-			makeMessage(data[0], data[1])
+			var data1 = preProcess(data, false);
+			plot(data1)
+    	var data2 = preProcess(data, true);
+			makeMessage(data2[0], data2[1])
+
+
   };
 
     reader.readAsBinaryString(files[0]);
