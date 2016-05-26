@@ -19,5 +19,4 @@ Now run the following command on commandline.
 ```
 python statsup.py {{name of text file}}
 ```
-
-TODO: Deployment of a web-app
+A web app written in Javascript is deployed at [http://ssonal.github.io/statsup/](http://ssonal.github.io/statsup/)
